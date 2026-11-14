@@ -1,3 +1,4 @@
+local ze = require("__zombiesextended-core__.lib")
 
 local entity_base = util.table.deepcopy(data.raw["assembling-machine"]["chemical-plant"])
 local item_base = util.table.deepcopy(data.raw["item"]["chemical-plant"])
@@ -14,11 +15,12 @@ for x, chemical_plant in pairs(chemical_plants) do
     entity.crafting_speed = chemical_plant.crafting_speed
     entity.energy_usage = chemical_plant.energy_con_kw .. "kW"
     entity.energy_source.drain = chemical_plant.energy_drain_kw .. "kW"
-    entity.energy_source.emissions_per_minute = chemical_plant.pollution_per_min
-    entity.module_specification.module_slots = chemical_plant.module_slots
+    entity.energy_source.emissions_per_minute = { pollution = chemical_plant.pollution_per_min }
+    entity.module_slots = chemical_plant.module_slots
     entity.next_upgrade = chemical_plant.next_upgrade
     
-    entity.animation = make_4way_animation_from_spritesheet({ 
+    local vanilla_animation = entity.graphics_set.animation
+    entity.graphics_set.animation = ze.add_vanilla_shadows(make_4way_animation_from_spritesheet(ze.flatten_hr({
         layers =
             {
                 {
@@ -38,30 +40,9 @@ for x, chemical_plant in pairs(chemical_plants) do
                         shift = util.by_pixel(0.5, -9),
                         scale = 0.5
                     }
-                },
-                {
-                    filename = "__base__/graphics/entity/chemical-plant/chemical-plant-shadow.png",
-                    width = 154,
-                    height = 112,
-                    repeat_count = 24,
-                    frame_count = 1,
-                    shift = util.by_pixel(28, 6),
-                    draw_as_shadow = true,
-                    hr_version =
-                    {
-                        filename = "__base__/graphics/entity/chemical-plant/hr-chemical-plant-shadow.png",
-                        width = 312,
-                        height = 222,
-                        repeat_count = 24,
-                        frame_count = 1,
-                        shift = util.by_pixel(27, 6),
-                        draw_as_shadow = true,
-                        scale = 0.5
-                    }
                 }
             }
-        }
-    )
+        })), vanilla_animation, 24)
 
     item.name = chemical_plant.name
     item.icon = "__zombiesextended-machines__/graphics/icons/" .. chemical_plant.name .. ".png"
@@ -80,8 +61,8 @@ for x, chemical_plant in pairs(chemical_plants) do
             name = chemical_plant.name,
             enabled = false,            
             energy_required = chemical_plant.craft_time,
-            ingredients = chemical_plant.ingredients,
-            result = chemical_plant.name
+            ingredients = ze.ingredients(chemical_plant.ingredients),
+            results = ze.result(chemical_plant.name)
         }
     })
 end

@@ -1,3 +1,4 @@
+local ze = require("__zombiesextended-core__.lib")
 
 local entity_base = util.table.deepcopy(data.raw["furnace"]["electric-furnace"])
 local item_base = util.table.deepcopy(data.raw["item"]["electric-furnace"])
@@ -14,12 +15,11 @@ for x, electric_furnace in pairs(electric_furnaces) do
     entity.crafting_speed = electric_furnace.crafting_speed
     entity.energy_usage = electric_furnace.energy_con_kw .. "kW"
     entity.energy_source.drain = electric_furnace.energy_drain_kw .. "kW"
-    entity.energy_source.emissions_per_minute = electric_furnace.pollution_per_min
-    entity.module_specification.module_slots = electric_furnace.module_slots
+    entity.energy_source.emissions_per_minute = { pollution = electric_furnace.pollution_per_min }
+    entity.module_slots = electric_furnace.module_slots
     entity.next_upgrade = electric_furnace.next_upgrade
     
-    entity.animation.layers[1].filename = "__zombiesextended-machines__/graphics/entity/" .. electric_furnace.name .. "/electric-furnace-base.png"
-    entity.animation.layers[1].hr_version.filename = "__zombiesextended-machines__/graphics/entity/" .. electric_furnace.name .. "/hr-electric-furnace.png"
+    ze.retarget(entity.graphics_set.animation.layers[1], "__zombiesextended-machines__/graphics/entity/" .. electric_furnace.name .. "/hr-electric-furnace.png")
 
     item.name = electric_furnace.name
     item.icon = "__zombiesextended-machines__/graphics/icons/" .. electric_furnace.name .. ".png"
@@ -38,8 +38,8 @@ for x, electric_furnace in pairs(electric_furnaces) do
             name = electric_furnace.name,
             enabled = false,
             energy_required = electric_furnace.craft_time,
-            ingredients = electric_furnace.ingredients,
-            result = electric_furnace.name
+            ingredients = ze.ingredients(electric_furnace.ingredients),
+            results = ze.result(electric_furnace.name)
         }
     })
 end

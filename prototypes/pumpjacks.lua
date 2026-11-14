@@ -1,3 +1,4 @@
+local ze = require("__zombiesextended-core__.lib")
 
 local entity_base = util.table.deepcopy(data.raw["mining-drill"]["pumpjack"])
 local item_base = util.table.deepcopy(data.raw["item"]["pumpjack"])
@@ -13,15 +14,18 @@ for x, pumpjack in pairs(pumpjacks) do
     entity.max_health = pumpjack.health
     entity.mining_speed = pumpjack.mining_speed
     entity.energy_usage = pumpjack.energy_con_kw .. "kW"
-    entity.energy_source.emissions_per_minute = pumpjack.pollution_per_min
-    entity.module_specification.module_slots = pumpjack.module_slots
+    entity.energy_source.emissions_per_minute = { pollution = pumpjack.pollution_per_min }
+    entity.module_slots = pumpjack.module_slots
     entity.next_upgrade = pumpjack.next_upgrade
     
-    entity.base_picture.sheets[1].filename = "__zombiesextended-machines__/graphics/entity/" .. pumpjack.name .. "/pumpjack-base.png"
-    entity.base_picture.sheets[1].hr_version.filename = "__zombiesextended-machines__/graphics/entity/" .. pumpjack.name .. "/hr-pumpjack-base.png"
+    -- 2.1 moved the pumpjack base into working_visualisations, one entry per direction.
+    for _, direction in pairs({ "north", "east", "south", "west" }) do
+        ze.retarget(entity.graphics_set.working_visualisations[1][direction .. "_animation"].layers[1], "__zombiesextended-machines__/graphics/entity/" .. pumpjack.name .. "/hr-pumpjack-base.png")
+    end
+    -- 2.1 added flipping with its own vanilla art; the mod has no flipped sheets.
+    entity.graphics_set_flipped = nil
 
-    entity.animations.north.layers[1].filename = "__zombiesextended-machines__/graphics/entity/" .. pumpjack.name .. "/pumpjack-horsehead.png"
-    entity.animations.north.layers[1].hr_version.filename = "__zombiesextended-machines__/graphics/entity/" .. pumpjack.name .. "/hr-pumpjack-horsehead.png"
+    ze.retarget(entity.graphics_set.animation.north.layers[1], "__zombiesextended-machines__/graphics/entity/" .. pumpjack.name .. "/hr-pumpjack-horsehead.png")
 
     item.name = pumpjack.name
     item.icon = "__zombiesextended-machines__/graphics/icons/" .. pumpjack.name .. ".png"
@@ -40,8 +44,8 @@ for x, pumpjack in pairs(pumpjacks) do
             name = pumpjack.name,
             enabled = false,            
             energy_required = pumpjack.craft_time,
-            ingredients = pumpjack.ingredients,
-            result = pumpjack.name
+            ingredients = ze.ingredients(pumpjack.ingredients),
+            results = ze.result(pumpjack.name)
         }
     })
 end

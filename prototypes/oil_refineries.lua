@@ -1,3 +1,4 @@
+local ze = require("__zombiesextended-core__.lib")
 
 local entity_base = util.table.deepcopy(data.raw["assembling-machine"]["oil-refinery"])
 local item_base = util.table.deepcopy(data.raw["item"]["oil-refinery"])
@@ -14,11 +15,12 @@ for x, oil_refinery in pairs(oil_refineries) do
     entity.crafting_speed = oil_refinery.crafting_speed
     entity.energy_usage = oil_refinery.energy_con_kw .. "kW"
     entity.energy_source.drain = oil_refinery.energy_drain_kw .. "kW"
-    entity.energy_source.emissions_per_minute = oil_refinery.pollution_per_min
-    entity.module_specification.module_slots = oil_refinery.module_slots
+    entity.energy_source.emissions_per_minute = { pollution = oil_refinery.pollution_per_min }
+    entity.module_slots = oil_refinery.module_slots
     entity.next_upgrade = oil_refinery.next_upgrade
     
-    entity.animation = make_4way_animation_from_spritesheet({ 
+    local vanilla_animation = entity.graphics_set.animation
+    entity.graphics_set.animation = ze.add_vanilla_shadows(make_4way_animation_from_spritesheet(ze.flatten_hr({
         layers =
             {
                 {
@@ -36,30 +38,9 @@ for x, oil_refinery in pairs(oil_refineries) do
                         shift = util.by_pixel(0, -7.5),
                         scale = 0.5
                     }
-                },
-                {
-                    filename = "__base__/graphics/entity/oil-refinery/oil-refinery-shadow.png",
-                    width = 337,
-                    height = 213,
-                    frame_count = 1,
-                    shift = util.by_pixel(82.5, 26.5),
-                    draw_as_shadow = true,
-                    hr_version =
-                    {
-                        filename = "__base__/graphics/entity/oil-refinery/hr-oil-refinery-shadow.png",
-                        width = 674,
-                        height = 426,
-                        frame_count = 1,
-                        shift = util.by_pixel(82.5, 26.5),
-                        draw_as_shadow = true,
-                        force_hr_shadow = true,
-                        scale = 0.5
-                    }
-
                 }
             }
-        }
-    )
+        })), vanilla_animation, 1)
 
     item.name = oil_refinery.name
     item.icon = "__zombiesextended-machines__/graphics/icons/" .. oil_refinery.name .. ".png"
@@ -78,8 +59,8 @@ for x, oil_refinery in pairs(oil_refineries) do
             name = oil_refinery.name,
             enabled = false,
             energy_required = oil_refinery.craft_time,
-            ingredients = oil_refinery.ingredients,
-            result = oil_refinery.name
+            ingredients = ze.ingredients(oil_refinery.ingredients),
+            results = ze.result(oil_refinery.name)
         }
     })
 end
