@@ -1,24 +1,15 @@
 local ze = require("__zombiesextended-core__.lib")
+local cfg = require("configuration")
 
-local entity_base = util.table.deepcopy(data.raw["assembling-machine"]["oil-refinery"])
-local item_base = util.table.deepcopy(data.raw["item"]["oil-refinery"])
 
-for x, oil_refinery in pairs(oil_refineries) do
+for x, oil_refinery in pairs(cfg.oil_refineries) do
     
-    entity = util.table.deepcopy(entity_base)
-    item = util.table.deepcopy(item_base)
-
-    entity.name = oil_refinery.name    
-    entity.icon = "__zombiesextended-machines__/graphics/icons/" .. oil_refinery.name .. ".png"
-    entity.minable.result = oil_refinery.name
-    entity.max_health = oil_refinery.health
+    local entity, item = ze.copy_tier({ type = "assembling-machine", base = "oil-refinery", mod = "zombiesextended-machines", tier = oil_refinery, subgroup = "ds-assembly-machines-2" })
     entity.crafting_speed = oil_refinery.crafting_speed
     entity.energy_usage = oil_refinery.energy_con_kw .. "kW"
     entity.energy_source.drain = oil_refinery.energy_drain_kw .. "kW"
     entity.energy_source.emissions_per_minute = { pollution = oil_refinery.pollution_per_min }
     entity.module_slots = oil_refinery.module_slots
-    entity.next_upgrade = oil_refinery.next_upgrade
-    
     local vanilla_animation = entity.graphics_set.animation
     entity.graphics_set.animation = ze.add_vanilla_shadows(make_4way_animation_from_spritesheet(ze.flatten_hr({
         layers =
@@ -41,26 +32,9 @@ for x, oil_refinery in pairs(oil_refineries) do
                 }
             }
         })), vanilla_animation, 1)
-
-    item.name = oil_refinery.name
-    item.icon = "__zombiesextended-machines__/graphics/icons/" .. oil_refinery.name .. ".png"
-    item.place_result = oil_refinery.name
-    item.order = item.order .. oil_refinery.order
-
-    if settings.startup["zombies-use-seperate-tab"].value == true then
-        item.subgroup = "ds-assembly-machines-2"
-    end
-
-    table.insert(data.raw["technology"][oil_refinery.technology].effects, { type = "unlock-recipe", recipe = oil_refinery.name })
+    ze.unlock(oil_refinery.technology, oil_refinery.name)
 
     data:extend({ entity, item,
-        {
-            type = "recipe",
-            name = oil_refinery.name,
-            enabled = false,
-            energy_required = oil_refinery.craft_time,
-            ingredients = ze.ingredients(oil_refinery.ingredients),
-            results = ze.result(oil_refinery.name)
-        }
+        ze.recipe(oil_refinery)
     })
 end

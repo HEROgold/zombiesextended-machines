@@ -1,45 +1,19 @@
 local ze = require("__zombiesextended-core__.lib")
+local cfg = require("configuration")
 
-local entity_base = util.table.deepcopy(data.raw["furnace"]["electric-furnace"])
-local item_base = util.table.deepcopy(data.raw["item"]["electric-furnace"])
 
-for x, electric_furnace in pairs(electric_furnaces) do
+for x, electric_furnace in pairs(cfg.electric_furnaces) do
     
-    entity = util.table.deepcopy(entity_base)
-    item = util.table.deepcopy(item_base)
-
-    entity.name = electric_furnace.name    
-    entity.icon = "__zombiesextended-machines__/graphics/icons/" .. electric_furnace.name .. ".png"
-    entity.minable.result = electric_furnace.name
-    entity.max_health = electric_furnace.health
+    local entity, item = ze.copy_tier({ type = "furnace", base = "electric-furnace", mod = "zombiesextended-machines", tier = electric_furnace, subgroup = "ds-assembly-machines-1" })
     entity.crafting_speed = electric_furnace.crafting_speed
     entity.energy_usage = electric_furnace.energy_con_kw .. "kW"
     entity.energy_source.drain = electric_furnace.energy_drain_kw .. "kW"
     entity.energy_source.emissions_per_minute = { pollution = electric_furnace.pollution_per_min }
     entity.module_slots = electric_furnace.module_slots
-    entity.next_upgrade = electric_furnace.next_upgrade
-    
     ze.retarget(entity.graphics_set.animation.layers[1], "__zombiesextended-machines__/graphics/entity/" .. electric_furnace.name .. "/hr-electric-furnace.png")
-
-    item.name = electric_furnace.name
-    item.icon = "__zombiesextended-machines__/graphics/icons/" .. electric_furnace.name .. ".png"
-    item.place_result = electric_furnace.name    
-    item.order = item.order .. electric_furnace.order
-
-    if settings.startup["zombies-use-seperate-tab"].value == true then
-        item.subgroup = "ds-assembly-machines-1"
-    end
-
-    table.insert(data.raw["technology"][electric_furnace.technology].effects, { type = "unlock-recipe", recipe = electric_furnace.name })
+    ze.unlock(electric_furnace.technology, electric_furnace.name)
 
     data:extend({ entity, item,
-        {
-            type = "recipe",
-            name = electric_furnace.name,
-            enabled = false,
-            energy_required = electric_furnace.craft_time,
-            ingredients = ze.ingredients(electric_furnace.ingredients),
-            results = ze.result(electric_furnace.name)
-        }
+        ze.recipe(electric_furnace)
     })
 end

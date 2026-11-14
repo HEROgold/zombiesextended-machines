@@ -1,24 +1,15 @@
 local ze = require("__zombiesextended-core__.lib")
+local cfg = require("configuration")
 
-local entity_base = util.table.deepcopy(data.raw["assembling-machine"]["chemical-plant"])
-local item_base = util.table.deepcopy(data.raw["item"]["chemical-plant"])
 
-for x, chemical_plant in pairs(chemical_plants) do
+for x, chemical_plant in pairs(cfg.chemical_plants) do
     
-    entity = util.table.deepcopy(entity_base)
-    item = util.table.deepcopy(item_base)
-
-    entity.name = chemical_plant.name    
-    entity.icon = "__zombiesextended-machines__/graphics/icons/" .. chemical_plant.name .. ".png"
-    entity.minable.result = chemical_plant.name
-    entity.max_health = chemical_plant.health
+    local entity, item = ze.copy_tier({ type = "assembling-machine", base = "chemical-plant", mod = "zombiesextended-machines", tier = chemical_plant, subgroup = "ds-assembly-machines-2" })
     entity.crafting_speed = chemical_plant.crafting_speed
     entity.energy_usage = chemical_plant.energy_con_kw .. "kW"
     entity.energy_source.drain = chemical_plant.energy_drain_kw .. "kW"
     entity.energy_source.emissions_per_minute = { pollution = chemical_plant.pollution_per_min }
     entity.module_slots = chemical_plant.module_slots
-    entity.next_upgrade = chemical_plant.next_upgrade
-    
     local vanilla_animation = entity.graphics_set.animation
     entity.graphics_set.animation = ze.add_vanilla_shadows(make_4way_animation_from_spritesheet(ze.flatten_hr({
         layers =
@@ -43,26 +34,9 @@ for x, chemical_plant in pairs(chemical_plants) do
                 }
             }
         })), vanilla_animation, 24)
-
-    item.name = chemical_plant.name
-    item.icon = "__zombiesextended-machines__/graphics/icons/" .. chemical_plant.name .. ".png"
-    item.place_result = chemical_plant.name
-    item.order = item.order .. chemical_plant.order
-
-    if settings.startup["zombies-use-seperate-tab"].value == true then
-        item.subgroup = "ds-assembly-machines-2"
-    end
-
-    table.insert(data.raw["technology"][chemical_plant.technology].effects, { type = "unlock-recipe", recipe = chemical_plant.name })
+    ze.unlock(chemical_plant.technology, chemical_plant.name)
 
     data:extend({ entity, item,
-        {
-            type = "recipe",
-            name = chemical_plant.name,
-            enabled = false,            
-            energy_required = chemical_plant.craft_time,
-            ingredients = ze.ingredients(chemical_plant.ingredients),
-            results = ze.result(chemical_plant.name)
-        }
+        ze.recipe(chemical_plant)
     })
 end

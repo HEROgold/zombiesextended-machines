@@ -1,25 +1,15 @@
 local ze = require("__zombiesextended-core__.lib")
+local cfg = require("configuration")
 
-local entity_base = util.table.deepcopy(data.raw["mining-drill"]["electric-mining-drill"])
-local item_base = util.table.deepcopy(data.raw["item"]["electric-mining-drill"])
 
-for x, electric_mining_drill in pairs(electric_mining_drills) do
+for x, electric_mining_drill in pairs(cfg.electric_mining_drills) do
     
-    entity = util.table.deepcopy(entity_base)
-    item = util.table.deepcopy(item_base)
-
-    entity.name = electric_mining_drill.name    
-    entity.icon = "__zombiesextended-machines__/graphics/icons/" .. electric_mining_drill.name .. ".png"
-    entity.minable.result = electric_mining_drill.name
-    entity.max_health = electric_mining_drill.health
+    local entity, item = ze.copy_tier({ type = "mining-drill", base = "electric-mining-drill", mod = "zombiesextended-machines", tier = electric_mining_drill, subgroup = "ds-extraction" })
     entity.mining_speed = electric_mining_drill.mining_speed
     entity.energy_usage = electric_mining_drill.energy_con_kw .. "kW"
     entity.resource_searching_radius = electric_mining_drill.mining_area
     entity.energy_source.emissions_per_minute = { pollution = electric_mining_drill.pollution_per_min }
     entity.module_slots = electric_mining_drill.module_slots
-    entity.next_upgrade = electric_mining_drill.next_upgrade
-    
-
     ze.retarget(entity.graphics_set.animation.north.layers[1], "__zombiesextended-machines__/graphics/entity/" .. electric_mining_drill.name .. "/hr-electric-mining-drill-N.png")
     entity.graphics_set.animation.north.layers[1].width = 190
     entity.graphics_set.animation.north.layers[1].height = 198
@@ -63,27 +53,9 @@ for x, electric_mining_drill in pairs(electric_mining_drills) do
     ze.retarget(entity.graphics_set.working_visualisations[7].west_animation, "__zombiesextended-machines__/graphics/entity/" .. electric_mining_drill.name .. "/hr-electric-mining-drill-W-front.png")
     entity.graphics_set.working_visualisations[7].west_animation.width = 134
     entity.graphics_set.working_visualisations[7].west_animation.height = 140
-
-
-    item.name = electric_mining_drill.name
-    item.icon = "__zombiesextended-machines__/graphics/icons/" .. electric_mining_drill.name .. ".png"
-    item.place_result = electric_mining_drill.name
-    item.order = item.order .. electric_mining_drill.order
-
-    if settings.startup["zombies-use-seperate-tab"].value == true then
-        item.subgroup = "ds-extraction"
-    end
-
-    table.insert(data.raw["technology"][electric_mining_drill.technology].effects, { type = "unlock-recipe", recipe = electric_mining_drill.name })
+    ze.unlock(electric_mining_drill.technology, electric_mining_drill.name)
 
     data:extend({ entity, item,
-        {
-            type = "recipe",
-            name = electric_mining_drill.name,
-            enabled = false,
-            energy_required = electric_mining_drill.craft_time,
-            ingredients = ze.ingredients(electric_mining_drill.ingredients),
-            results = ze.result(electric_mining_drill.name)
-        }
+        ze.recipe(electric_mining_drill)
     })
 end

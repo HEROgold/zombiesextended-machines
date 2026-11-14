@@ -1,24 +1,15 @@
 local ze = require("__zombiesextended-core__.lib")
+local cfg = require("configuration")
 
-local entity_base = util.table.deepcopy(data.raw["assembling-machine"]["assembling-machine-3"])
-local item_base = util.table.deepcopy(data.raw["item"]["assembling-machine-3"])
 
-for x, assembler in pairs(assemblers) do
+for x, assembler in pairs(cfg.assemblers) do
     
-    entity = util.table.deepcopy(entity_base)
-    item = util.table.deepcopy(item_base)
-
-    entity.name = assembler.name    
-    entity.icon = "__zombiesextended-machines__/graphics/icons/" .. assembler.name .. ".png"
-    entity.minable.result = assembler.name
-    entity.max_health = assembler.health
+    local entity, item = ze.copy_tier({ type = "assembling-machine", base = "assembling-machine-3", mod = "zombiesextended-machines", tier = assembler, subgroup = "ds-assembly-machines-2" })
     entity.crafting_speed = assembler.crafting_speed
     entity.energy_usage = assembler.energy_con_kw .. "kW"
     entity.energy_source.drain = assembler.energy_drain_kw .. "kW"
     entity.energy_source.emissions_per_minute = { pollution = assembler.pollution_per_min }
     entity.module_slots = assembler.module_slots    
-    entity.next_upgrade = assembler.next_upgrade
-    
     -- 2.1 redrew the assembling machine, so the mod's sheets (cut from the 1.1
     -- hr art) use the 1.1 hr layout. The 2.1 shadow and lights don't fit them.
     local gfx = "__zombiesextended-machines__/graphics/entity/" .. assembler.name .. "/"
@@ -33,25 +24,8 @@ for x, assembler in pairs(assemblers) do
     entity.graphics_set = {
         animation = ze.sprite(gfx .. "hr-assembling-machine.png", { width = 214, height = 237, frame_count = 32, line_length = 8, shift = util.by_pixel(0, -0.75) })
     }
-
-    item.name = assembler.name
-    item.icon = "__zombiesextended-machines__/graphics/icons/" .. assembler.name .. ".png"
-    item.place_result = assembler.name
-    item.order = item.order .. assembler.order
-
-    if settings.startup["zombies-use-seperate-tab"].value == true then
-        item.subgroup = "ds-assembly-machines-2"
-    end
-
-    table.insert(data.raw["technology"][assembler.technology].effects, { type = "unlock-recipe", recipe = assembler.name })
+    ze.unlock(assembler.technology, assembler.name)
     data:extend({ entity, item,
-        {
-            type = "recipe",
-            name = assembler.name,
-            enabled = false,            
-            energy_required = assembler.craft_time,
-            ingredients = ze.ingredients(assembler.ingredients),
-            results = ze.result(assembler.name)
-        }
+        ze.recipe(assembler)
     })
 end
