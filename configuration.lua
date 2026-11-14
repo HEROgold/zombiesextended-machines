@@ -26,9 +26,9 @@ local technologies = {
     { order = "a-b-c", name = "lab-mk2", count = 400, time = 60, prerequisite = {"lab-mk1"}, ingredients = science_t4 },
     { order = "a-b-c", name = "lab-mk3", count = 500, time = 60, prerequisite = {"lab-mk2"}, ingredients = science_t5 },
 
-    { order = "a-b-c", name = "electric-mining-drill-mk1", count = 200, time = 60, prerequisite = {"mining-productivity-2"}, ingredients = science_t3 },
-    { order = "a-b-c", name = "electric-mining-drill-mk2", count = 200, time = 60, prerequisite = {"electric-mining-drill-mk1"}, ingredients = science_t4 },
-    { order = "a-b-c", name = "electric-mining-drill-mk3", count = 200, time = 60, prerequisite = {"electric-mining-drill-mk2"}, ingredients = science_t5 },
+    { order = "a-b-c", name = "ze-electric-mining-drill-mk1", art = "electric-mining-drill-mk1", count = 200, time = 60, prerequisite = {"mining-productivity-2"}, ingredients = science_t3 },
+    { order = "a-b-c", name = "ze-electric-mining-drill-mk2", art = "electric-mining-drill-mk2", count = 200, time = 60, prerequisite = {"ze-electric-mining-drill-mk1"}, ingredients = science_t4 },
+    { order = "a-b-c", name = "ze-electric-mining-drill-mk3", art = "electric-mining-drill-mk3", count = 200, time = 60, prerequisite = {"ze-electric-mining-drill-mk2"}, ingredients = science_t5 },
 }
 
 -- Need to mod some vanilla items in order for the upgrade planner to work
@@ -38,8 +38,8 @@ ze.set_upgrade("assembling-machine", "chemical-plant", "chemical-plant-mk1", "ch
 ze.set_upgrade("assembling-machine", "centrifuge", "centrifuge-mk1", "centrifuge")
 ze.set_upgrade("furnace", "electric-furnace", "electric-furnace-mk1", "furnace")
 ze.set_upgrade("lab", "lab", "lab-mk1", "lab")
-ze.set_upgrade("mining-drill", "electric-mining-drill", "electric-mining-drill-mk1", "mining-drill")
-ze.set_upgrade("mining-drill", "pumpjack", "pumpjack-mk1", "pumpjack")
+ze.set_upgrade("mining-drill", "electric-mining-drill", "ze-electric-mining-drill-mk1", "mining-drill")
+ze.set_upgrade("mining-drill", "pumpjack", "ze-pumpjack-mk1", "pumpjack")
 
 local assemblers = {
     { order = "a", name = "assembling-machine-mk1", health = 450, crafting_speed = 2, energy_con_kw = 750, energy_drain_kw = 25, pollution_per_min = 4, module_slots = 4, next_upgrade = "assembling-machine-mk2", craft_time = ze.craft_time.mk1, ingredients = { {"assembling-machine-3",2},{"complex-processing-unit",2} }, technology = "assembling-machine-mk1" },
@@ -78,15 +78,15 @@ local labs = {
 }
 
 local electric_mining_drills = {
-    { order = "a", name = "electric-mining-drill-mk1", health = 350, mining_speed = 1, energy_con_kw = 120, mining_area = 3.49, pollution_per_min = 20, module_slots = 3, next_upgrade = "electric-mining-drill-mk2", craft_time = ze.craft_time.mk1, ingredients = { {"electric-mining-drill",2},{"complex-processing-unit",2} }, technology = "electric-mining-drill-mk1" },
-    { order = "b", name = "electric-mining-drill-mk2", health = 400, mining_speed = 2, energy_con_kw = 150, mining_area = 4.49, pollution_per_min = 40, module_slots = 4, next_upgrade = "electric-mining-drill-mk3", craft_time = ze.craft_time.mk2, ingredients = { {"electric-mining-drill-mk1",2},{"complex-processing-unit",2} }, technology = "electric-mining-drill-mk2" },
-    { order = "c", name = "electric-mining-drill-mk3", health = 450, mining_speed = 4, energy_con_kw = 180, mining_area = 5.49, pollution_per_min = 60, module_slots = 6, craft_time = ze.craft_time.mk3, ingredients = { {"electric-mining-drill-mk2",2},{"complex-processing-unit",2} }, technology = "electric-mining-drill-mk3" },
+    { order = "a", name = "ze-electric-mining-drill-mk1", art = "electric-mining-drill-mk1", health = 350, mining_speed = 1, energy_con_kw = 120, mining_area = 3.49, pollution_per_min = 20, module_slots = 3, next_upgrade = "ze-electric-mining-drill-mk2", craft_time = ze.craft_time.mk1, ingredients = { {"electric-mining-drill",2},{"complex-processing-unit",2} }, technology = "ze-electric-mining-drill-mk1" },
+    { order = "b", name = "ze-electric-mining-drill-mk2", art = "electric-mining-drill-mk2", health = 400, mining_speed = 2, energy_con_kw = 150, mining_area = 4.49, pollution_per_min = 40, module_slots = 4, next_upgrade = "ze-electric-mining-drill-mk3", craft_time = ze.craft_time.mk2, ingredients = { {"ze-electric-mining-drill-mk1",2},{"complex-processing-unit",2} }, technology = "ze-electric-mining-drill-mk2" },
+    { order = "c", name = "ze-electric-mining-drill-mk3", art = "electric-mining-drill-mk3", health = 450, mining_speed = 4, energy_con_kw = 180, mining_area = 5.49, pollution_per_min = 60, module_slots = 6, craft_time = ze.craft_time.mk3, ingredients = { {"ze-electric-mining-drill-mk2",2},{"complex-processing-unit",2} }, technology = "ze-electric-mining-drill-mk3" },
 }
 
 local pumpjacks = {
-    { order = "a", name = "pumpjack-mk1", health = 250, mining_speed = 2, energy_con_kw = 120, mining_area = 1, pollution_per_min = 20, module_slots = 3, next_upgrade = "pumpjack-mk2", craft_time = ze.craft_time.mk1, ingredients = { {"pumpjack",2},{"complex-processing-unit",2} }, technology = "oil-processing-mk1" },
-    { order = "b", name = "pumpjack-mk2", health = 300, mining_speed = 4, energy_con_kw = 160, mining_area = 1, pollution_per_min = 40, module_slots = 4, next_upgrade = "pumpjack-mk3", craft_time = ze.craft_time.mk2, ingredients = { {"pumpjack-mk1",2},{"complex-processing-unit",2} }, technology = "oil-processing-mk2" },
-    { order = "c", name = "pumpjack-mk3", health = 350, mining_speed = 8, energy_con_kw = 200, mining_area = 1, pollution_per_min = 60, module_slots = 6, craft_time = ze.craft_time.mk3, ingredients = { {"pumpjack-mk2",2},{"complex-processing-unit",2} }, technology = "oil-processing-mk3" },
+    { order = "a", name = "ze-pumpjack-mk1", art = "pumpjack-mk1", health = 250, mining_speed = 2, energy_con_kw = 120, mining_area = 1, pollution_per_min = 20, module_slots = 3, next_upgrade = "ze-pumpjack-mk2", craft_time = ze.craft_time.mk1, ingredients = { {"pumpjack",2},{"complex-processing-unit",2} }, technology = "oil-processing-mk1" },
+    { order = "b", name = "ze-pumpjack-mk2", art = "pumpjack-mk2", health = 300, mining_speed = 4, energy_con_kw = 160, mining_area = 1, pollution_per_min = 40, module_slots = 4, next_upgrade = "ze-pumpjack-mk3", craft_time = ze.craft_time.mk2, ingredients = { {"ze-pumpjack-mk1",2},{"complex-processing-unit",2} }, technology = "oil-processing-mk2" },
+    { order = "c", name = "ze-pumpjack-mk3", art = "pumpjack-mk3", health = 350, mining_speed = 8, energy_con_kw = 200, mining_area = 1, pollution_per_min = 60, module_slots = 6, craft_time = ze.craft_time.mk3, ingredients = { {"ze-pumpjack-mk2",2},{"complex-processing-unit",2} }, technology = "oil-processing-mk3" },
 }
 
 return {

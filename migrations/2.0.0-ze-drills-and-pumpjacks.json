@@ -1,0 +1,31 @@
+{
+    "entity": [
+        ["electric-mining-drill-mk1", "ze-electric-mining-drill-mk1"],
+        ["electric-mining-drill-mk2", "ze-electric-mining-drill-mk2"],
+        ["electric-mining-drill-mk3", "ze-electric-mining-drill-mk3"],
+        ["pumpjack-mk1", "ze-pumpjack-mk1"],
+        ["pumpjack-mk2", "ze-pumpjack-mk2"],
+        ["pumpjack-mk3", "ze-pumpjack-mk3"]
+    ],
+    "item": [
+        ["electric-mining-drill-mk1", "ze-electric-mining-drill-mk1"],
+        ["electric-mining-drill-mk2", "ze-electric-mining-drill-mk2"],
+        ["electric-mining-drill-mk3", "ze-electric-mining-drill-mk3"],
+        ["pumpjack-mk1", "ze-pumpjack-mk1"],
+        ["pumpjack-mk2", "ze-pumpjack-mk2"],
+        ["pumpjack-mk3", "ze-pumpjack-mk3"]
+    ],
+    "recipe": [
+        ["electric-mining-drill-mk1", "ze-electric-mining-drill-mk1"],
+        ["electric-mining-drill-mk2", "ze-electric-mining-drill-mk2"],
+        ["electric-mining-drill-mk3", "ze-electric-mining-drill-mk3"],
+        ["pumpjack-mk1", "ze-pumpjack-mk1"],
+        ["pumpjack-mk2", "ze-pumpjack-mk2"],
+        ["pumpjack-mk3", "ze-pumpjack-mk3"]
+    ],
+    "technology": [
+        ["electric-mining-drill-mk1", "ze-electric-mining-drill-mk1"],
+        ["electric-mining-drill-mk2", "ze-electric-mining-drill-mk2"],
+        ["electric-mining-drill-mk3", "ze-electric-mining-drill-mk3"]
+    ]
+}
